@@ -51,4 +51,6 @@ syscall(SYS_signal, signo, func)  // signal系统调用
 signal()                          // glibc的signal函数
 sysv_signal()                     // System V风格的signal函数
 bsd_signal()                      // BSD风格的signal函数
+
+System V 风格的signal函数:每次处理完之后要想重新触发，必须再次安装信号处理函数
 ```
