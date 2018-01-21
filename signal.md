@@ -44,3 +44,11 @@ typedef void (*sighandler_t)(int);
 __sighandler_t sysv_signal (int __sig, __sighandler_t __handler) // System V 风格的 signal函数
 __sighandler_t bsd_signal (int __sig, __sighandler_t __handler)  // BSD风格的 signal函数
 ```
+
+### 四类signal函数
+```
+syscall(SYS_signal, signo, func)  // signal系统调用
+signal()                          // glibc的signal函数
+sysv_signal()                     // System V风格的signal函数
+bsd_signal()                      // BSD风格的signal函数
+```
