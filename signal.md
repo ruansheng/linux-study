@@ -26,6 +26,12 @@ SIGRTMIN-SIGRTMAX 属于可靠信号
 32、33 信号被NPTL这个线程库征用
 ```
 
+### 触发信号
+```
+1. 硬件触发(比如我们按下了键盘或者其它硬件故障)
+2. 软件触发(最常用发送信号的系统函数是kill, raise, alarm和setitimer以及sigqueue函数，软件来源还包括一些非法运算等操作)
+```
+
 ### signal函数
 ```
 #include<signal.h>
