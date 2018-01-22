@@ -1,5 +1,5 @@
 ## signal 分析
-linux信号继承自unix信号，unix信号是不可靠信号，后面linux新增了可靠信息
+linux信号继承自unix信号，unix信号是不可靠信号，后面linux新增了可靠信息，信号的可靠与不可靠只与信号值有关，与信号的发送及安装函数无关
 不可靠信号:内核用位图来记录，内核可能丢弃，因为内核投递信息到进程的时候判断该信号是否是未决状态，就会丢弃该信号
 可靠信号:内核内部用队列来维护，收到信号进挂到相应的队列中，但是挂起的信号个数也是有限制的
 
@@ -53,4 +53,15 @@ sysv_signal()                     // System V风格的signal函数
 bsd_signal()                      // BSD风格的signal函数
 
 System V 风格的signal函数:每次处理完之后要想重新触发，必须再次安装信号处理函数
+```
+
+### 预定于宏
+```
+// glibc-2.26/bits/signal.h
+# define NSIG	_NSIG
+
+// glibc-2.26/bits/signum-generic.h
+#define _NSIG		(__SIGRTMAX + 1)
+#define __SIGRTMIN	32
+#define __SIGRTMAX	__SIGRTMIN
 ```
