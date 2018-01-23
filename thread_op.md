@@ -1,6 +1,18 @@
 ## thread 操作
 线程可以由主线程创建，也可以由被创建出来的子线程再创建，但是一个进程中的所有线程都是同等的关系，线程没有父子之分，这也大大简化了线程的处理
 
+### 线程的操作函数
+| POSIX函数        | 功能描述 |
+| pthread_create   | 创建一个线程  |
+| pthread_exit        | 退出线程    |
+| pthread_self        | 获取线程ID   |
+| pthread_equal | 检查2个线程id是否相等  |
+| pthread_join | 等待线程的退出  |
+| pthread_detach | 设置线程状态为分离状态  |
+| pthread_cancel | 线程的取消 |
+| pthread_cleanup_push | 线程退出，清理函数注册和执行  |
+| pthread_cleanup_pop | 线程退出，清理函数注册和执行     |
+
 ### 线程示例
 ```
 #include<stdio.h>
