@@ -107,3 +107,37 @@ void *thread_function(void *arg)
     return NULL;
 }
 ```
+
+### 线程名称的操作
+```
+#include<stdio.h>
+#include<pthread.h>
+#include<sys/prctl.h>
+
+void *tmain(void *arg)
+{
+    char name[32];
+    prctl(PR_SET_NAME, (unsigned long)"pthread-1");
+    prctl(PR_GET_NAME, (unsigned long)name);
+    printf("thread name:%s\n", name);
+    while(1)
+    {
+	sleep(1);
+    }
+}
+
+int main(void)
+{
+    pthread_t tid;
+    pthread_create(&tid, NULL, tmain, NULL);
+    pthread_join(tid, NULL);
+
+    return 0;
+}
+
+#gcc -o mypthread mypthread.c -lpthread
+#ps -L -p 17816
+  PID   LWP TTY          TIME CMD
+17816 17816 pts/1    00:00:00 mypthread
+17816 17817 pts/1    00:00:00 pthread-1
+```
