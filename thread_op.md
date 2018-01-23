@@ -141,3 +141,30 @@ int main(void)
 17816 17816 pts/1    00:00:00 mypthread
 17816 17817 pts/1    00:00:00 pthread-1
 ```
+
+### 设置线程属性
+```
+pthread_create 的第二个参数是 const pthread_attr_t *attr 
+pthread_attr_init()函数可以重置线程的属性为默认值
+使用示例:
+pthread_attr_t attr
+pthread_attr_init(&attr)
+```
+
+### 线程栈
+```
+查看线程栈大小
+# ulimit -s
+8192
+
+设置stack大小
+#ulimit –s value
+
+#include<pthread.h>
+// 返回线程的基地址和栈的大小
+int pthread_attr_getstacksize(pthread_attr_t *attr, size_t *stacksize); 
+
+// 设置线程的基地址和栈的大小
+int pthread_attr_setstacksize(pthread_attr_t *attr, size_t stacksize)
+```
+
