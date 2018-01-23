@@ -168,3 +168,11 @@ int pthread_attr_getstacksize(pthread_attr_t *attr, size_t *stacksize);
 int pthread_attr_setstacksize(pthread_attr_t *attr, size_t stacksize)
 ```
 
+### 线程退出
+```
+退出当前线程
+#include  <pthread.h>
+void  pthread_exit(void  *retval)
+其中void  *retval是线程退出的传递参数，不传参数可以传NULL，return返回值也可作为传递的参数
+可以通过pthread_join取出返回值，注意这个参数不要用函数栈内数据
+```
