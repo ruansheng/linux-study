@@ -73,3 +73,24 @@ void **retval 用户定义的指针，用来存储被等待线程的返回值
 返回值:
 0代表成功。 失败，返回的则是错误号。
 ```
+
+### 线程ID
+```
+linux提供了gettid系统调用来返回线程ID，但是glibc并没有将该系统调用封装起来，如果要获取线程ID，可以采用:
+#include<sys/syscall.h>
+int tid = syscall(SYS_gettid);
+
+使用如下:
+void *thread_function(void *arg)
+{
+    int i;
+    for(i = 0; i < 20; i++)
+    {
+	int tid = syscall(SYS_gettid);
+	printf("Thread id:%d says hi!\n", tid);
+	sleep(1);
+    }
+
+    return NULL;
+}
+```

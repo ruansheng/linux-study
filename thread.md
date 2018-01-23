@@ -32,6 +32,8 @@ mysql     1280     1  1298  0   39  2017 ?        Sl     5:26 /usr/sbin/mysqld -
 
 这里LWP就是gettid()系统调用的返回值
 这里NLWP就是线程组内线程的个数
+
+cd /proc/$PID/task/ 可以看到一个进程中的线程信息
 ```
 
 ### 进程与线程的关系
