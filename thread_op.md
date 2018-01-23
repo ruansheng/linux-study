@@ -57,7 +57,7 @@ int pthread_create(pthread_t *tidp,const pthread_attr_t *attr,
 
 参数说明:
 pthread_t *tidp 线程id，也就是线程句柄
-const pthread_attr_t *attr 用来设置线程属性
+const pthread_attr_t *attr 用来设置线程属性，比如新建线程栈的大小，调度策略等，NULL表示默认
 (void*)(*start_rtn)(void*) 函数指针，线程运行函数的起始地址
 void *arg 运行函数的参数
 
