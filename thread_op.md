@@ -3,7 +3,7 @@
 
 ### 线程的操作函数
 | POSIX函数        | 功能描述 |
- | --------   | -----:|
+ | --------   | :-----|
 | pthread_create   | 创建一个线程  |
 | pthread_exit        | 退出线程    |
 | pthread_self        | 获取线程ID   |
