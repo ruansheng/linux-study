@@ -1,7 +1,53 @@
-## pthread互斥量
-互斥量就是互相排斥之意，用来保护共享数据，保证操作是原子性的
+## pthread锁
+NTPL提供了pthread_rwlock_t类型来表示读写锁，和互斥量一样，也提供了初始化方法
 
-### 
+###初始化和销毁读写锁
+```
+pthread_rwlock_t  m_rw_lock;
+pthread_rwlock_init(pthread_rwlock_t * ,pthread_rwattr_t *);
+pthread_rwlock_t m_rw_lock = PTHREAD_RWLOCK_INITIALIZER;
+
+pthread_rwlock_destroy(pthread_rwlock_t* );
+```
+
+### 读锁上锁
+```
+pthread_rwlock_rdlock(pthread_rwlock_t *);
+pthread_rwlock_tryrdlock(pthread_rwlock_t *);
+pthread_rwlock_timedrdlock(pthread_rwlock_t *, const struct timespec *abstime);
+```
+
+### 写锁上锁
+```
+pthread_rwlock_wrlock(pthread_rwlock_t *);
+pthread_rwlock_trywrlock(pthread_rwlock_t *);
+pthread_rwlock_timedwrlock(pthread_rwlock_t *, const struct timespec *abstime);
+```
+
+### 释放锁
+```
+无论是读锁还是写锁，锁的释放都是同一个接口:
+pthread_rwlock_unlock(pthread_rwlock_t *);
+```
+
+### 读写锁的竞争策略
+```
+读写锁的属性是:pthread_rwlockattr_t类型
+属性中有lockkind 和 pshared
+
+int pthread_rwlockattr_setkind_np(pthread_rwlockattr_t *attr, int pref);
+int pthread_rwlockattr_getkind_np(const pthread_rwlockattr_t *attr, int *pref);
+
+enum
+{
+  PTHREAD_RWLOCK_PREFER_READER_NP,
+  PTHREAD_RWLOCK_PREFER_WRITER_NP,
+  PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP,
+  PTHREAD_RWLOCK_DEFAULT_NP = PTHREAD_RWLOCK_PREFER_READER_NP
+};
+
+
+```
 
 ### 示例
 ```
