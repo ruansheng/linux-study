@@ -23,3 +23,7 @@ glibc 分析
 [3.&nbsp; pthread_join](./pthread_join.md)
 
 [4.&nbsp; pthread_detach](./pthread_detach.md)
+
+[5.&nbsp; pthread锁](./pthread_lock.md)
+
+[6.&nbsp; pthread互斥量](./pthread_mutex.md)
