@@ -19,3 +19,7 @@ glibc 分析
 [1.&nbsp; thread 机制](./thread.md)
 
 [2.&nbsp; thread 操作](./thread_op.md)
+
+[3.&nbsp; pthread_join](./pthread_join.md)
+
+[4.&nbsp; pthread_detach](./pthread_detach.md)
