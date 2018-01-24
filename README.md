@@ -33,3 +33,6 @@ glibc 分析
 [8.&nbsp; pthread互斥量](./pthread/pthread_mutex.md)
 
 [8.&nbsp; 条件变量](./pthread/pthread_cond.md)
+
+### 管道篇
+[1.&nbsp; pipe 机制](./pipe/pipe.md)
