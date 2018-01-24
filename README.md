@@ -26,8 +26,10 @@ glibc 分析
 
 [5.&nbsp; pthread_cancel](./pthread/pthread_cancel.md)
 
-[6.&nbsp; pthread锁](./pthread/pthread_lock.md)
+[6.&nbsp; pthread_cleanup_push和pthread_cleanup_pop](./pthread/pthread_cancel.md)
 
-[7.&nbsp; pthread互斥量](./pthread/pthread_mutex.md)
+[7.&nbsp; pthread锁](./pthread/pthread_lock.md)
+
+[8.&nbsp; pthread互斥量](./pthread/pthread_mutex.md)
 
 [8.&nbsp; 条件变量](./pthread/pthread_cond.md)
