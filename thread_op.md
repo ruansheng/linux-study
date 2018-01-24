@@ -108,6 +108,26 @@ void *thread_function(void *arg)
 }
 ```
 
+### pthread_self 和 SYS_gettid 的区别
+```
+pthread_self()是POSIX的实现，它的返回值是pthread_t，pthread_t在linux中实际是无符号长整型，即unsigned long。
+gettid是系统调用，它的返回值是pid_t，在linux上是一个无符号整型。
+pthread_self是为了区分同一进程种不同的线程, 是由thread的实现来决定的，而gettid获取的线程id和pid是有关系的，因为在linux中线程其实也是一个进程(clone)，所以它的线程ID也是pid_t类型。在一个进程中，主线程的线程id和进程id是一样的，该进程中其他的线程id则在linux系统内是唯一的，因为linux中线程就是进程，而进程号是唯一的。gettid是不可移植的。
+
+pthread_self返回的是同一个进程中各个线程之间的标识号，对于这个进程内是唯一的，而不同进程中，每个线程返回的pthread_self可能返回的是一样的。而gettid是用来系统内各个线程间的标识符，由于linux采用轻量级进程实现的，它其实返回的应该是pid号。
+```
+
+### 给线程取名字
+```
+#include <sys/prctl.h>  
+int prctl(int option, unsigned long arg2, unsigned long arg3, unsigned long arg4, unsigned long arg5);
+
+对于"option"的选项有很多，我们这里只关注的是"PR_SET_NAME"这个选项
+当入参"option"值为"PR_SET_NAME"时，prctl()会为 调用此函数的 线程设置新名字，新名字设置为参数(char *)arg2。其中，线程名字的参数arg2字符串的最大长度为16 bytes(包括字符串终止符)。如果arg2长度超过16 bytes，它将会被截断为16 bytes
+
+除了使用“PR_SET_NAME”参数可以设置线程名字外，另外一个函数pthread_setname_np()也可以实现此功能。设置完成后我们可以通过线程的tid来查看它的新名字
+```
+
 ### 线程名称的操作
 ```
 #include<stdio.h>
