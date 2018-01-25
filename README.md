@@ -35,4 +35,8 @@ glibc 分析
 [8.&nbsp; 条件变量](./pthread/pthread_cond.md)
 
 ### 管道篇
-[1.&nbsp; pipe 机制](./pipe/pipe.md)
+[1.&nbsp; 管道机制](./pipe/pipe.md)
+
+[2.&nbsp; 无名管道pipe](./pipe/pipe_op.md)
+
+[3.&nbsp; 命名管道FIFO](./pipe/fifo_op.md)
