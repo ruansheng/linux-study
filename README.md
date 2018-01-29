@@ -2,9 +2,11 @@
 glibc 分析
 
 ### 进程篇
-[1.&nbsp; exit()分析](./process/stdlib-exit.md)
+[1.&nbsp; 进程的状态](./process/process-status.md)
 
-[2.&nbsp; atexit()分析](./process/stdlib-atexit.md)
+[2.&nbsp; exit()分析](./process/stdlib-exit.md)
+
+[3.&nbsp; atexit()分析](./process/stdlib-atexit.md)
 
 ### 信号篇
 [1.&nbsp; signal 机制](./signal/signal.md)
