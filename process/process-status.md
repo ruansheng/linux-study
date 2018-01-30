@@ -50,4 +50,27 @@ CONFIG_HZ=1000
 2. 有些进程需要等待某些特定条件(等待子进程退出、等待socket连接、尝试获得锁、等待信号量等)，满足条件才可以继续执行，往往等待的时间是不可估量的
 
 上面的情况如果进程依旧占用CPU就不合适了，对CPU资源是极大的浪费，这时候内核就会调整进程的状态，把进程从CPU的运行队列中移除，同时CPU选择其他进程来使用CPU
+
+可中断睡眠状态和不可中断睡眠状态的区别在于能否响应收到的信号
+
+内核提供了hung task检测机制，启动一个名为khungtaskd的内核线程来检测处于TASK_UNINTERRUPTIBLE状态的进程是否已经失控，khungtaskd定期被唤醒(默认120秒)，khungtaskd会遍历所有处于TASK_UNINTERRUPTIBLE状态的进程
+这里的120秒可以修改，查看:
+# sysctl kernel.hung_task_timeout_secs
+kernel.hung_task_timeout_secs = 120
+关于khungtaskd的源码在kernel/hung_task.c中
+
+查看不可中断状态的进程停在什么位置或等待什么资源:(procfs的wchan提供了这些信息，wchan是wait channel的意思，ps命令也可以通过wchan获得这些信息)
+下面是查看当前bash正在等待子进程的退出:
+# echo $$
+2778
+# cat /proc/2778/wchan
+do_wait
+# ps -p 2778 -o pid,wchan,cmd
+PID WCHAN  CMD
+2778 wait   -bash
+# cat /proc/2778/stack
+[<ffffffff8108baf3>] do_wait+0x1f3/0x250
+[<ffffffff8108cbf0>] SyS_wait4+0x80/0x110
+[<ffffffff816975c9>] system_call_fastpath+0x16/0x1b
+[<ffffffffffffffff>] 0xffffffffffffffff
 ```
