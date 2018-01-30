@@ -1,5 +1,5 @@
-## glibc-analysis
-glibc 分析
+## linux-study
+linux study
 
 ### 进程篇
 [1.&nbsp; exit()分析](./process/stdlib-exit.md)
