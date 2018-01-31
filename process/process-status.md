@@ -196,3 +196,44 @@ EXIT_ZOMBIE状态 和 EXIT_DEAD状态 2种都是退出状态，处于这2种状�
 
 进程的退出是非常快的，很难观察到一个进程处于EXIT_DEAD状态
 ```
+
+### 查看进程状态
+```
+# cat /proc/9392/status
+Name:	phantomjs
+State:	R (running)
+...
+
+在linux内核代码中:fs/proc/array.c
+static const char * const task_state_array[] = {
+	/* states in TASK_REPORT: */
+	"R (running)",		/* 0x00 */
+	"S (sleeping)",		/* 0x01 */
+	"D (disk sleep)",	/* 0x02 */
+	"T (stopped)",		/* 0x04 */
+	"t (tracing stop)",	/* 0x08 */
+	"X (dead)",		/* 0x10 */
+	"Z (zombie)",		/* 0x20 */
+	"P (parked)",		/* 0x40 */
+
+	/* states beyond TASK_REPORT: */
+	"I (idle)",		/* 0x80 */
+};
+会在procfs中出现的状态有:
+"R (running)"
+"S (sleeping)"
+"D (disk sleep)"
+"T (stopped)"
+"t (tracing stop)"
+"X (dead)"
+"Z (zombie)"
+```
+| procfs中的值        | 进程状态 |
+ | :--------   | :-----|
+|  R (running)  | TASK_RUNNING  |
+| S (sleeping) | TASK_INTERRUPTIBLE  |
+| D (disk sleep) | TASK_UNINTERRUPTIBLE |
+| T (stopped) | TASK_STOPPED |
+| t (tracing stop) | TASK_TRACED  |
+| Z (zombie) | EXIT_ZOMBIE |
+| X (dead) | EXIT_DEAD |
