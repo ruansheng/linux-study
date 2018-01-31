@@ -2,7 +2,9 @@
 linux study
 
 ### 进程篇
-[1.&nbsp; 进程的状态](./process/process-status.md)
+[1.&nbsp; 进程状态](./process/process-status.md)
+
+[1.&nbsp; 进程调度](./process/process-dispatch.md)
 
 [2.&nbsp; exit()分析](./process/stdlib-exit.md)
 
