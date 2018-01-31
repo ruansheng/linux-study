@@ -4,10 +4,11 @@
 | TASK_RUNNING   | 可运行状态，但未必正在使用CPU，也许在等待调度  |
 | TASK_INTERRUPTIBLE | 可中断的睡眠状态，在等待某个条件的完成  |
 | TASK_UNINTERRUPTIBLE | 不可中断的睡眠状态，与可中断的睡眠类似，但是不会被信号中断 |
-| TASK_STOPED | 暂停状态，进程收到某信号，运行被停止 |
+| TASK_STOPPED | 暂停状态，进程收到某信号，运行被停止 |
 | TASK_TRACED | 被跟踪状态，和暂停状态有些类似，进程被停止，被另一个进程跟踪  |
 | EXIT_ZOMBIE | 僵尸状态，进程已已经退出，但是尚未被父进程或init进程收养  |
 | EXIT_DEAD | 真正死亡的状态，进程停留在该状态的时间很短，很难被观察到 |
+| TASK_KILLABLE | 内核2.6.25引入，和TASK_UNINTERRUPTIBLE类似，区别是可以响应致命信号SIGKILL |
 
 ### 可运行状态 TASK_RUNNING
 ```
@@ -154,6 +155,7 @@ wait_event(wq, condition);
 wait_event_timeout(wq, condition, timeout);
 wait_event_interruptible(wq, condition);
 wait_event_interruptible_timeout(wq, condition, timeout);
+wait_event_killabel(wq, condition);  // 添加为TASK_KILLABLE状态
 第一个参数是等待队列头部，表示该进程会睡眠在该等待队列上
 
 从等待队列上唤醒进程:
@@ -163,4 +165,16 @@ wake_up_all(x);
 wake_up_interruptible(x);
 wake_up_interruptible_nr(x, nr);
 wake_up_interruptible_all(x);
+```
+
+### TASK_KILLABLE状态
+```
+内核2.6.25引入，和TASK_UNINTERRUPTIBLE类似，区别是可以响应致命信号SIGKILL
+添加了一个宏来添加为TASK_KILLABLE状态，SIGKILL信号可以将其唤醒
+wait_event_killabel(wq, condition);
+```
+
+### TASK_STOPPED状态 和 TASK_TRACED状态
+```
+
 ```

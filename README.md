@@ -1,5 +1,5 @@
-## glibc-analysis
-glibc 分析
+## linux-study
+linux study
 
 ### 进程篇
 [1.&nbsp; 进程的状态](./process/process-status.md)
