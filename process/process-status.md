@@ -73,4 +73,94 @@ PID WCHAN  CMD
 [<ffffffff8108cbf0>] SyS_wait4+0x80/0x110
 [<ffffffff816975c9>] system_call_fastpath+0x16/0x1b
 [<ffffffffffffffff>] 0xffffffffffffffff
+
+等待队列:睡眠进程是通过等待队列(wait queue)实现的
+内核使用双向链表来实现等待队列，每个等待队列都可以用等待队列头来标识，等待队列头的定义如下:
+// /include/linux/wait.h
+struct __wait_queue_head {
+    spinlock_t lock;
+    struct list_head task_list;
+};
+typedef struct __wait_queue_head wait_queue_head_t;
+解释:
+spinlock_t lock 在对task_list与操作的过程中，使用该锁实现对等待队列的互斥访问
+struct list_head task_list 双向循环链表，存放等待的进程
+直接定义并初始化:
+wait_queue_head_t my_queue;
+init_waitqueue_head(&my_queue);
+init_waitqueue_head()函数会将自旋锁初始化为未锁，等待队列初始化为空的双向循环链表
+定义并初始化:
+DECLARE_WAIT_QUEUE_HEAD(my_queue);
+
+进程需要休眠的时候需要定义一个等待队列元素，将元素挂入合适的等待队列中，等待队列元素定义如下:
+typedef struct __wait_queue wait_queue_t;
+struct __wait_queue {
+    unsigned int flags;
+#define WQ_FLAG_EXCLUSIVE   0x01
+    void *private;
+    wait_queue_func_t func;
+    struct list_head task_list;
+};
+其中flags域指明该等待的进程是互斥进程还是非互斥进程。其中0是非互斥进程，WQ_FLAG_EXCLUSIVE(0×01)是互斥进程
+宏初始化:
+DECLARE_WAITQUEUE(name,tsk);
+此处是定义一个wait_queue_t类型的变量name，并将其private与设置为tsk
+函数初始化:
+static inline void init_waitqueue_entry(wait_queue_t *q, struct task_struct *p)
+{
+    q->flags = 0;
+    q->private = p;
+    q->func = default_wake_function;
+}
+static inline void init_waitqueue_func_entry(wait_queue_t *q,wait_queue_func_t func)
+{
+    q->flags = 0;
+    q->private = NULL;
+    q->func = func;
+}
+
+将等待队列元素添加到合适的等待队列:
+设置等待的进程为非互斥进程，并将其添加进等待队列头(q)的队头中
+void add_wait_queue(wait_queue_head_t *q, wait_queue_t *wait)
+{
+    unsigned long flags;
+    wait->flags &= ~WQ_FLAG_EXCLUSIVE;
+    spin_lock_irqsave(&q->lock, flags);
+    __add_wait_queue(q, wait);
+    spin_unlock_irqrestore(&q->lock, flags);
+}
+该函数也和add_wait_queue()函数功能基本一样，只不过它是将等待的进程(wait)设置为互斥进程
+void add_wait_queue_exclusive(wait_queue_head_t *q, wait_queue_t *wait)
+{
+    unsigned long flags;
+    wait->flags |= WQ_FLAG_EXCLUSIVE;
+    spin_lock_irqsave(&q->lock, flags);
+    __add_wait_queue_tail(q, wait);
+    spin_unlock_irqrestore(&q->lock, flags);
+}
+
+将等待队列元素从等待队列移除:
+在等待的资源或事件满足时，进程被唤醒，使用该函数被从等待头中删除
+void remove_wait_queue(wait_queue_head_t *q, wait_queue_t *wait)
+{
+    unsigned long flags;
+    spin_lock_irqsave(&q->lock, flags);
+    __remove_wait_queue(q, wait);
+    spin_unlock_irqrestore(&q->lock, flags);
+}
+
+内核封装了一些宏来完成添加到等待队列功能:
+wait_event(wq, condition);
+wait_event_timeout(wq, condition, timeout);
+wait_event_interruptible(wq, condition);
+wait_event_interruptible_timeout(wq, condition, timeout);
+第一个参数是等待队列头部，表示该进程会睡眠在该等待队列上
+
+从等待队列上唤醒进程:
+wake_up(x);
+wake_up_nr(x, nr);
+wake_up_all(x);
+wake_up_interruptible(x);
+wake_up_interruptible_nr(x, nr);
+wake_up_interruptible_all(x);
 ```
