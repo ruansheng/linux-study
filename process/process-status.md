@@ -10,7 +10,7 @@
 | EXIT_DEAD | 真正死亡的状态，进程停留在该状态的时间很短，很难被观察到 |
 | TASK_KILLABLE | 内核2.6.25引入，和TASK_UNINTERRUPTIBLE类似，区别是可以响应致命信号SIGKILL |
 
-### 可运行状态 TASK_RUNNING
+### TASK_RUNNING状态(可运行状态)
 ```
 这个描述不爱太准确，应该说是可运行状态，并非一定是在占有CPU运行，可能叫 TASK_RUNABLE会更好
 处于这个状态的进程有2种情况:
@@ -44,8 +44,10 @@ CONFIG_HZ=1000
 表示1秒钟有1000个时钟滴答，增加一个时钟滴答(内核的jiffies++)
 ```
 
-### 可中断睡眠状态和不可中断睡眠状态
+### TASK_INTERRUPTIBLE状态 和 TASK_INTERRUPTIBLE状态
 ```
+(可中断睡眠状态和不可中断睡眠状态)
+
 进程不总是处于运行状态，有些进程需要和慢速的设备交互，就需要消耗很长的时间
 1. 比如进程和磁盘交互消耗的时间是很长的，这时候进程就需要等待这些耗时的操作完成之后才能执行接下来的指令
 2. 有些进程需要等待某些特定条件(等待子进程退出、等待socket连接、尝试获得锁、等待信号量等)，满足条件才可以继续执行，往往等待的时间是不可估量的
@@ -176,5 +178,21 @@ wait_event_killabel(wq, condition);
 
 ### TASK_STOPPED状态 和 TASK_TRACED状态
 ```
+TASK_STOPPED状态:
+进程收到 SIGSTOP、SIGTSTP、SIGTTIN、SIGTTOU 信号都会将进程暂停，进程暂停就会进入该状态
+进程收到 收到 SIGCONT 信号可以从 TASK_STOPPED状态 恢复
 
+TASK_TRACED状态:
+被跟踪状态，进程会停下来等待跟踪它的进程对它进行进一步的操作，例如gdb调试程序，当进程再断点处停下来时
+
+这2个状态类似之处是都处于暂停状态，不同之处是TASK_TRACED状态不会被SIGCONT信号唤醒，只有调试进程通过ptrace系统调用，下达PTRACE_CONT、PTRACE_DETACH等指令，或者调试进程退出，被跟踪进程才能恢复TASK_RUNNING状态
+```
+
+### EXIT_ZOMBIE状态 和 EXIT_DEAD状态
+```
+EXIT_ZOMBIE状态 和 EXIT_DEAD状态 2种都是退出状态，处于这2种状态的进程都已经死了
+
+如果子进程退出，父进程没有将SIGCHLD信号的处理函数重设为SIG_IGN，或者没有为SIGCHLD设置SA_NOCLDWAIT标志位，那么子进程退出后会进入EXIT_ZOMBIE状态等待父进程或init进程来收尸
+
+进程的退出是非常快的，很难观察到一个进程处于EXIT_DEAD状态
 ```
