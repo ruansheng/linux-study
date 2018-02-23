@@ -54,3 +54,55 @@ switch(fork()) {
 2. 如果所有读取端描述符都已关闭，此时进程再次往管道里面写入数据，写操作会失败，errno被设置为EPIPE，同时内核会向进程发送一个SIGPIPE信号
 3. 当所有的读取端和写入端都关闭后，管道才能被销毁
 ```
+
+### example
+```
+#include<unistd.h>
+#include<sys/types.h>
+#include<errno.h>
+#include<stdio.h>
+#include<stdlib.h>
+
+int main() {
+    int pipe_fd[2];
+    pid_t pid;
+    char r_buf[4096];
+    char w_buf[4096];
+    int writenum;
+    int rnum;
+
+    memset(r_buf, 0, sizeof(r_buf));
+    if(pipe(pipe_fd) < 0) {
+	printf("[PARENT] pipe create error!\n");
+	return -1;
+    }
+    printf("\n");
+    if((pid = fork()) == 0) { // 子进程
+	close(pipe_fd[1]);
+	while(1) {
+	    rnum = read(pipe_fd[0], r_buf, 1000);
+	    printf("[CHILD] readnum is %d\n", rnum);
+	    if(rnum == 0) { // EOF
+		printf("[CHILD] all the writer of pipe are closed. break and exit.\n");
+		break;
+	    }
+	}
+	close(pipe_fd[0]);
+	exit(0);
+    } else if(pid > 0) {  // 父进程
+	printf("[PARENT] fork success\n");
+	close(pipe_fd[0]);
+	memset(w_buf, 0, sizeof(w_buf));
+	if(writenum = write(pipe_fd[1], w_buf, 1024) == -1) {
+	    printf("[PARENT] write to pipe error\n");
+	} else {
+	    printf("[PARENT] the bytes write to pipe is %d \n");
+	}
+	sleep(15);
+	printf("[PARENT] I will close the write end of pipe.\n");
+	close(pipe_fd[1]);
+	sleep(2);
+	return 0;
+    }
+}
+```
