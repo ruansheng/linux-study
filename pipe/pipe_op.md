@@ -73,36 +73,49 @@ int main() {
 
     memset(r_buf, 0, sizeof(r_buf));
     if(pipe(pipe_fd) < 0) {
-	printf("[PARENT] pipe create error!\n");
-	return -1;
+	    printf("[PARENT] pipe create error!\n");
+	    return -1;
     }
     printf("\n");
     if((pid = fork()) == 0) { // 子进程
-	close(pipe_fd[1]);
-	while(1) {
-	    rnum = read(pipe_fd[0], r_buf, 1000);
-	    printf("[CHILD] readnum is %d\n", rnum);
-	    if(rnum == 0) { // EOF
-		printf("[CHILD] all the writer of pipe are closed. break and exit.\n");
-		break;
+	    close(pipe_fd[1]);
+	    while(1) {
+	        rnum = read(pipe_fd[0], r_buf, 1000);
+	        printf("[CHILD] readnum is %d\n", rnum);
+	        if(rnum == 0) { // EOF
+		        printf("[CHILD] all the writer of pipe are closed. break and exit.\n");
+		        break;
+	        }
 	    }
-	}
-	close(pipe_fd[0]);
-	exit(0);
+	    close(pipe_fd[0]);
+	    exit(0);
     } else if(pid > 0) {  // 父进程
-	printf("[PARENT] fork success\n");
-	close(pipe_fd[0]);
-	memset(w_buf, 0, sizeof(w_buf));
-	if(writenum = write(pipe_fd[1], w_buf, 1024) == -1) {
-	    printf("[PARENT] write to pipe error\n");
-	} else {
-	    printf("[PARENT] the bytes write to pipe is %d \n");
-	}
-	sleep(15);
-	printf("[PARENT] I will close the write end of pipe.\n");
-	close(pipe_fd[1]);
-	sleep(2);
-	return 0;
+	    printf("[PARENT] fork success pid:%d \n", pid);
+	    close(pipe_fd[0]);
+	    memset(w_buf, 0, sizeof(w_buf));
+	    if(writenum = write(pipe_fd[1], w_buf, 1024) == -1) {
+	        printf("[PARENT] write to pipe error\n");
+	    } else {
+	        printf("[PARENT] the bytes write to pipe is %d \n");
+	    }
+	    sleep(15);
+	    printf("[PARENT] I will close the write end of pipe.\n");
+	    close(pipe_fd[1]);
+	    sleep(2);
+	    return 0;
     }
 }
+
+从proc fs中可以看到父进程打开的管道
+[root@iz2ze2vve1jzbbft74642sz ~]# cd /proc/27831/fd
+[root@iz2ze2vve1jzbbft74642sz fd]# ll
+总用量 0
+lrwx------ 1 root root 64 2月  23 15:06 0 -> /dev/pts/0
+lrwx------ 1 root root 64 2月  23 15:06 1 -> /dev/pts/0
+lrwx------ 1 root root 64 2月  23 15:06 2 -> /dev/pts/0
+lr-x------ 1 root root 64 2月  23 15:06 3 -> pipe:[34948360]
+
+用lsof也可以看到进程打开的管道
+[root@iz2ze2vve1jzbbft74642sz fd]# lsof | grep FIFO | grep 27854
+1         27854          root    3r     FIFO                0,8       0t0   34962078 pipe
 ```
