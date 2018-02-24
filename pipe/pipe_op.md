@@ -119,3 +119,21 @@ lr-x------ 1 root root 64 2月  23 15:06 3 -> pipe:[34948360]
 [root@iz2ze2vve1jzbbft74642sz fd]# lsof | grep FIFO | grep 27854
 1         27854          root    3r     FIFO                0,8       0t0   34962078 pipe
 ```
+
+### 管道大小
+```
+管道的本质是对应一片内存区域，内存区域就有大小的区分，从Linux 2.6.11版本起，管道的默认大小是65536字节，可以调用fcntl来获取和修改这个值的大小
+
+获取管道大小
+pipe_capacity = fcntl(fd, ?F_GETPIPE_SZ);
+
+设置管道大小
+ret = fcntl(fd, ?F_SETPIPE_SZ, size);
+
+管道内存区域大小必须在页面大小(PAGE)和上限值之间，上限记录在
+#cat /proc/sys/fs/pipe-max-size
+1048576
+
+在使用管道时，管道有大小，写入须谨慎，不能连续地写入大量的内容，一旦管道满了，写入就会被阻塞；
+对于读取端，要及时读取，防止管道被写满，造成写入阻塞
+```
